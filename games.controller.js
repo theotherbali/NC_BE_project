@@ -6,6 +6,12 @@ exports.getCategories = (req, res) => {
 });
 };
 
+exports.getReviews = (req, res => {
+  selectReviews().then((reviews) => {
+    res.status(200).send({reviews})
+  })
+})
+
 exports.error404handler = (req, res, next) => { 
   res.status(404).send({ message: 'path not found' });
 }

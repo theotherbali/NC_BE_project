@@ -37,5 +37,24 @@ describe ('endpoints', () =>{
                 )
             })
     })
+    describe('GET /api/reviews', () => {
+        test('returns all reviews and status of 200', () => {
+            return request(app)
+            .get("/api/reviews")
+            .expect(200)
+            .then( (response) => {
+            expect(response.body.reviews).toHaveLength(12)
+            response.body.reviews.forEach(
+                (review) => {
+                    expect.objectContaining({title: expect.any(String), owner: expect.any(String), review_img_url: expect.any(String), review_body: expect.any(String),
+                    review_img_url: expect.any(String), created_at: expect.any(Date), votes: expect.any(Int)})
+                }
+            )
+        })
+
+        })
+    })
     
-});
+    });
+
+    //returns categories with slug and descriptions and status
