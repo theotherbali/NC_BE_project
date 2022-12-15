@@ -73,3 +73,24 @@ describe("endpoints", () => {
     });
   });
 });
+describe("endpoints with parameters", () => {
+  test.only("/api/reviews/:review_id returns correct object", () => {
+    return request(app)
+    .get("/api/reviews/5")
+    .then((response) => {
+      console.log(response.body)
+      expect(response.body.reviews).toEqual(expect.objectContaining({
+        owner: expect.any(String),
+        title: expect.any(String),
+        review_id: expect.any(Number),
+        category: expect.any(String),
+        review_img_url: expect.any(String),
+        created_at: expect.any(String),
+        votes: expect.any(Number),
+        designer: expect.any(String),
+        comment_count: expect.any(String),
+      }))
+    })
+  })
+
+})
