@@ -3,6 +3,7 @@ const app = require("../games.app.js");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const db = require("../db/connection");
+const { forEach } = require("../db/data/test-data/categories.js");
 
 beforeEach(() => {
   return seed(data);
@@ -62,7 +63,7 @@ describe("endpoints", () => {
           });
         });
     });
-    test("returns correct comment count for each review id", () => {
+    test("returns comment count for each review id", () => {
       return request(app)
         .get("/api/reviews")
         .then((response) => {
@@ -73,6 +74,18 @@ describe("endpoints", () => {
               })
             );
           });
+        });
+    });
+    test("returns reviews in ordered by date with latest appearing first", () => {
+      return request(app)
+        .get("/api/reviews")
+        .then((response) => {
+          const reviewArray = response.body.reviews;
+          for (let i = 0; i < (reviewArray.length -1); i++) {
+            expect(Date.parse(reviewArray[i].created_at)).toBeGreaterThanOrEqual(
+              Date.parse(reviewArray[i + 1].created_at)
+            );
+          }
         });
     });
   });
