@@ -58,18 +58,6 @@ describe("endpoints", () => {
                 created_at: expect.any(String),
                 votes: expect.any(Number),
                 designer: expect.any(String),
-              })
-            );
-          });
-        });
-    });
-    test("returns comment count for each review id", () => {
-      return request(app)
-        .get("/api/reviews")
-        .then((response) => {
-          response.body.reviews.forEach((review) => {
-            expect(review).toEqual(
-              expect.objectContaining({
                 comment_count: expect.any(String),
               })
             );
@@ -80,12 +68,7 @@ describe("endpoints", () => {
       return request(app)
         .get("/api/reviews")
         .then((response) => {
-          const reviewArray = response.body.reviews;
-          for (let i = 0; i < (reviewArray.length -1); i++) {
-            expect(Date.parse(reviewArray[i].created_at)).toBeGreaterThanOrEqual(
-              Date.parse(reviewArray[i + 1].created_at)
-            );
-          }
+          expect(response.body.reviews).toBeSortedBy('created_at', {descending: true})
         });
     });
   });
