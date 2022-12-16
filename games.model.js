@@ -30,7 +30,6 @@ exports.selectReviewsByID = (id) => {
             WHERE reviews.review_id = $1
             GROUP BY reviews.review_id;`, [parseInt(id)])
     .then((result) => {
-      console.log(result.rows)
       return result.rows[0];
     });
 };

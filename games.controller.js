@@ -16,10 +16,11 @@ exports.getReviews = (req, res) => {
   });
 };
 
-exports.getReviewsByID = (req, res) => {
+exports.getReviewsByID = (req, res, next) => {
   const id = req.params.review_id
-  console.log(id)
-  selectReviewsByID(id).then((reviews) => {
+  selectReviewsByID(id)
+  .then((reviews) => {
     res.status(200).send({ reviews })
   })
+  .catch(next)
 }

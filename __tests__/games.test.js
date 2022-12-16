@@ -3,7 +3,6 @@ const app = require("../games.app.js");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const db = require("../db/connection");
-const { forEach } = require("../db/data/test-data/categories.js");
 
 beforeEach(() => {
   return seed(data);
@@ -73,12 +72,12 @@ describe("endpoints", () => {
     });
   });
 });
-describe("endpoints with parameters", () => {
-  test.only("/api/reviews/:review_id returns correct object", () => {
+describe.only("endpoints with parameters", () => {
+  test("/api/reviews/:review_id returns correct object", () => {
     return request(app)
     .get("/api/reviews/5")
+    .expect(200)
     .then((response) => {
-      console.log(response.body)
       expect(response.body.reviews).toEqual(expect.objectContaining({
         owner: expect.any(String),
         title: expect.any(String),
@@ -90,6 +89,14 @@ describe("endpoints with parameters", () => {
         designer: expect.any(String),
         comment_count: expect.any(String),
       }))
+    })
+  })
+  test('generates error 400 if invalid snack id', () => {
+    return request(app)
+    .get("/api/reviews/lol")
+    .expect(400)
+    .then(({ body: { message } }) => {
+      expect(message).toBe("invalid request");
     })
   })
 
