@@ -41,7 +41,6 @@ exports.selectCommentsByRevID = (id) => {
   .query(`SELECT * FROM comments WHERE review_id = $1`, [id])
   .then((result) => {
     const comments = result.rows
-    console.log(comments.length)
       if(comments.length === 0){
         return Promise.reject ({
           status: 404,
@@ -52,3 +51,22 @@ exports.selectCommentsByRevID = (id) => {
 })
 }
 
+exports.insertNewComment = (id,comment) => {
+  const username = comment.username
+  const text = comment.body
+  return db
+  .query(`INSERT INTO comments
+  (review_id, author, body)
+  VALUES
+  ($1, $2, $3) returning *`, [id, username, text])
+  .then((result) => {
+    const newComment = result.rows[0]
+    if(newComment.body === null){
+      return Promise.reject ({
+        status: 404,
+        message: "no reviews found with that id, unable to post comment"
+    })
+    }
+    return newComment
+  })
+}

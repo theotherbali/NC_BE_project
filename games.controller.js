@@ -3,6 +3,7 @@ const {
   selectReviews,
   selectReviewsByID,
   selectCommentsByRevID,
+  insertNewComment,
 } = require("./games.model");
 
 exports.getCategories = (req, res) => {
@@ -33,4 +34,15 @@ exports.getCommentsByRevID = (req, res, next) => {
     res.status(200).send({ comments })
   })
   .catch(next)
+}
+
+exports.postComment = (req, res, next) => {
+  const id = req.params.review_id
+  const comment = req.body
+  insertNewComment(id, comment)
+  .then((newComment) => {
+    res.status(201).send(newComment)
+  })
+  .catch(next)
+  
 }
