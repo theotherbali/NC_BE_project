@@ -1,3 +1,12 @@
+exports.customErrorHandler = (err, req, res, next) => {
+  if (err.status) {
+    res.status(err.status)
+    .send({ message: err.message });
+  } else {
+    next(err)
+  };
+}
+
 exports.error404Handler = (req, res, next) => {
   res.status(404).send({ message: "path not found" });
 };

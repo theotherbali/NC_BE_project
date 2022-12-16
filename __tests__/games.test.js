@@ -81,19 +81,62 @@ describe.only("endpoints with parameters", () => {
       expect(response.body.reviews).toEqual(expect.objectContaining({
         owner: expect.any(String),
         title: expect.any(String),
-        review_id: expect.any(Number),
+        review_id: 5,
         category: expect.any(String),
         review_img_url: expect.any(String),
         created_at: expect.any(String),
         votes: expect.any(Number),
         designer: expect.any(String),
-        comment_count: expect.any(String),
       }))
     })
   })
-  test('generates error 400 if invalid snack id', () => {
+  test('generates error 400 if invalid review id', () => {
     return request(app)
     .get("/api/reviews/lol")
+    .expect(400)
+    .then(({ body: { message } }) => {
+      expect(message).toBe("invalid request");
+    })
+  })
+  test('generates error 404 if non-existent review id', () => {
+    return request(app)
+    .get("/api/reviews/90000")
+    .expect(404)
+    .then(({ body: { message } }) => {
+      expect(message).toBe("no reviews found with that id");
+    })
+  })
+  test("/api/reviews/:review_id/comments returns correct object", () => {
+    return request(app)
+    .get("/api/reviews/3/comments")
+    .expect(200)
+    .then((response) => {
+      expect(response.body.comments).toHaveLength(3)
+      response.body.comments.forEach((comment) => {
+          expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            review_id: expect.any(Number),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+          })
+        )
+      })
+    })
+  })
+  test('returns error if ID has not made any comments', () => {
+    return request(app)
+    .get("/api/reviews/5/comments")
+    .expect(404)
+    .then(({ body: { message } }) => {
+     expect(message).toBe("no comments found with that id") 
+    })
+  })
+  test('generates error 400 if invalid review id', () => {
+    return request(app)
+    .get("/api/reviews/lol/comments")
     .expect(400)
     .then(({ body: { message } }) => {
       expect(message).toBe("invalid request");
