@@ -229,3 +229,62 @@ describe("POST to /api/reviews/:review_id/comments ", () => {
       });
   });
 });
+describe('PATCH /api/reviews/:review_id', () => {
+  test('updates vote count by number given', () => {
+      return request(app)
+        .patch("/api/reviews/5").send({inc_votes: 1})
+        .expect(200)
+        .then((response) => {
+          expect(response.body).toEqual(
+            expect.objectContaining({
+              review_id: 5,
+              votes: 1
+            })
+          );
+        });
+  })
+  test("additional non-needed keys do not prevent from posting comment", () => {
+    return request(app)
+      .patch("/api/reviews/5").send( {inc_votes: 100})
+      .expect(200)
+      .then((response) => {
+        expect(response.body).toEqual(
+          expect.objectContaining({
+            review_id: 5,
+            votes: 100
+          })
+        );
+      });
+  });
+  test("returns 404 for non-existent ID", () => {
+    return request(app)
+      .patch("/api/reviews/90000").send(
+        {inc_votes: 1})
+      .expect(404)
+      .then(({ body: { message } }) =>
+        expect(message).toBe(
+          "not found"
+        )
+      );
+  });
+  test("returns 400 for invalid ID", () => {
+    return request(app)
+      .patch("/api/reviews/lol").send(
+        {inc_votes: 1}
+      )
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("invalid request");
+      });
+  });
+  test("returns 400 for invalid inc_votes value", () => {
+    return request(app)
+      .patch("/api/reviews/5").send({ inc_votes: "lorum ipsum stuff" })
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("invalid request");
+      });
+  });
+
+
+})

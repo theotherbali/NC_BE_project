@@ -46,3 +46,14 @@ exports.postComment = (req, res, next) => {
   .catch(next)
   
 }
+
+exports.patchReviewVoteCount = (req, res, next) => {
+  const id = req.params.review_id
+  const inc_count = req.body
+  updateVoteCount(id, inc_count)
+  .then((updatedReview) => {
+    res.status(200).send(updatedReview)
+  })
+
+  
+}

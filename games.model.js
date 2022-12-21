@@ -70,3 +70,15 @@ exports.insertNewComment = (id,comment) => {
     return newComment
   })
 }
+
+exports.updateVoteCount = (id, inc_count) => {
+  const increase = inc_count.inc_count
+  return db
+  .query(`UPDATE reviews 
+  SET 
+  votes = votes + $1
+  WHERE
+  id = $2
+  RETURNING *` [increase, id])
+  .then( (updatedreview) )
+}
