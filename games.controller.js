@@ -4,6 +4,7 @@ const {
   selectReviewsByID,
   selectCommentsByRevID,
   insertNewComment,
+  updateVoteCount,
 } = require("./games.model");
 
 exports.getCategories = (req, res) => {
@@ -49,11 +50,10 @@ exports.postComment = (req, res, next) => {
 
 exports.patchReviewVoteCount = (req, res, next) => {
   const id = req.params.review_id
-  const inc_count = req.body
-  updateVoteCount(id, inc_count)
-  .then((updatedReview) => {
-    res.status(200).send(updatedReview)
+  const inc_votes = req.body.inc_votes
+  updateVoteCount(id, inc_votes)
+  .then((review) => {
+    res.status(200).send({ review })
   })
-
-  
+  .catch(next)
 }

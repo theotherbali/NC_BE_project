@@ -235,23 +235,23 @@ describe('PATCH /api/reviews/:review_id', () => {
         .patch("/api/reviews/5").send({inc_votes: 1})
         .expect(200)
         .then((response) => {
-          expect(response.body).toEqual(
+          expect(response.body.review).toEqual(
             expect.objectContaining({
               review_id: 5,
-              votes: 1
+              votes: 6
             })
           );
         });
   })
   test("additional non-needed keys do not prevent from posting comment", () => {
     return request(app)
-      .patch("/api/reviews/5").send( {inc_votes: 100})
+      .patch("/api/reviews/5").send( {inc_votes: 100, pigeons: true})
       .expect(200)
       .then((response) => {
-        expect(response.body).toEqual(
+        expect(response.body.review).toEqual(
           expect.objectContaining({
             review_id: 5,
-            votes: 100
+            votes: 105
           })
         );
       });
@@ -263,7 +263,7 @@ describe('PATCH /api/reviews/:review_id', () => {
       .expect(404)
       .then(({ body: { message } }) =>
         expect(message).toBe(
-          "not found"
+          "no reviews found with that id"
         )
       );
   });

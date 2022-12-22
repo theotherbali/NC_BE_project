@@ -61,24 +61,25 @@ exports.insertNewComment = (id,comment) => {
   ($1, $2, $3) returning *`, [id, username, text])
   .then((result) => {
     const newComment = result.rows[0]
-    if(newComment.body === null){
-      return Promise.reject ({
-        status: 404,
-        message: "no reviews found with that id, unable to post comment"
-    })
-    }
     return newComment
   })
 }
 
-exports.updateVoteCount = (id, inc_count) => {
-  const increase = inc_count.inc_count
+exports.updateVoteCount = (id, inc_votes) => {
+
   return db
-  .query(`UPDATE reviews 
-  SET 
+  .query(`UPDATE reviews SET 
   votes = votes + $1
   WHERE
-  id = $2
-  RETURNING *` [increase, id])
-  .then( (updatedreview) )
+  review_id = $2
+  RETURNING *`, [inc_votes, id])
+  .then( (result) => {
+    if(result.rows.length ===0){
+      return Promise.reject({
+        status: 404,
+        message: "no reviews found with that id"
+      })
+    }
+    return result.rows[0]
+  } )
 }
