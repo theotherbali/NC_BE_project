@@ -4,6 +4,8 @@ const {
   selectReviewsByID,
   selectCommentsByRevID,
   insertNewComment,
+  updateVoteCount,
+  selectUsers,
 } = require("./games.model");
 
 exports.getCategories = (req, res) => {
@@ -12,10 +14,19 @@ exports.getCategories = (req, res) => {
   });
 };
 
-exports.getReviews = (req, res) => {
-  selectReviews().then((reviews) => {
+exports.getUsers = (req, res) =>{
+  selectUsers().then((users) => {
+    res.status(200).send( { users })
+  }
+  )
+}
+
+exports.getReviews = (req, res, next) => {
+  const body = req.body
+  selectReviews(body).then((reviews) => {
     res.status(200).send({ reviews });
-  });
+  })
+  .catch(next);
 };
 
 exports.getReviewsByID = (req, res, next) => {
@@ -45,4 +56,14 @@ exports.postComment = (req, res, next) => {
   })
   .catch(next)
   
+}
+
+exports.patchReviewVoteCount = (req, res, next) => {
+  const id = req.params.review_id
+  const inc_votes = req.body.inc_votes
+  updateVoteCount(id, inc_votes)
+  .then((review) => {
+    res.status(200).send({ review })
+  })
+  .catch(next)
 }

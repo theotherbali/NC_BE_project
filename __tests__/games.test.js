@@ -229,3 +229,163 @@ describe("POST to /api/reviews/:review_id/comments ", () => {
       });
   });
 });
+describe('PATCH /api/reviews/:review_id', () => {
+  test('updates vote count by number given', () => {
+      return request(app)
+        .patch("/api/reviews/5").send({inc_votes: 1})
+        .expect(200)
+        .then((response) => {
+          expect(response.body.review).toEqual(
+            expect.objectContaining({
+              review_id: 5,
+              votes: 6
+            })
+          );
+        });
+  })
+  test("additional non-needed keys do not prevent from posting comment", () => {
+    return request(app)
+      .patch("/api/reviews/5").send( {inc_votes: 100, pigeons: true})
+      .expect(200)
+      .then((response) => {
+        expect(response.body.review).toEqual(
+          expect.objectContaining({
+            review_id: 5,
+            votes: 105
+          })
+        );
+      });
+  });
+  test("returns 404 for non-existent ID", () => {
+    return request(app)
+      .patch("/api/reviews/90000").send(
+        {inc_votes: 1})
+      .expect(404)
+      .then(({ body: { message } }) =>
+        expect(message).toBe(
+          "no reviews found with that id"
+        )
+      );
+  });
+  test("returns 400 for invalid ID", () => {
+    return request(app)
+      .patch("/api/reviews/lol").send(
+        {inc_votes: 1}
+      )
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("invalid request");
+      });
+  });
+  test("returns 400 for invalid inc_votes value", () => {
+    return request(app)
+      .patch("/api/reviews/5").send({ inc_votes: "lorum ipsum stuff" })
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("invalid request");
+      });
+  });
+
+
+})
+describe('GET /api/users', () => {
+  test('returns correct object', () => {
+    return request(app)
+    .get("/api/users")
+    .expect(200)
+    .then((response) => {
+      expect(response.body.users).toHaveLength(4)
+      response.body.users.forEach( (user) => {expect(user).toEqual(expect.objectContaining({
+        username: expect.any(String),
+        name: expect.any(String),
+        avatar_url: expect.any(String)
+      }))
+      })
+    })
+  }) 
+})
+describe('GET /api/reviews (query)', () => {
+  test('filters/sorts/orders by query supplied ', () =>{
+    return request(app)
+    .get("/api/reviews")
+    .send({ categories: "social deduction", sort_by: "title", order: "DESC"})
+    .expect(200)
+    .then((response) => {
+      response.body.reviews.forEach((review) => {expect(review).toEqual(expect.objectContaining({
+        category: "social deduction"
+      }))})
+      expect(response.body.reviews).toBeSortedBy("title", {
+        descending: true,
+      });
+    })
+
+  })
+  test('partial queries are accepted - categories', () => {
+    return request(app)
+    .get("/api/reviews")
+    .send({ categories: "social deduction"})
+    .expect(200)
+    .then((response) => {
+      response.body.reviews.forEach((review) => {expect(review).toEqual(expect.objectContaining({
+        category: "social deduction"
+      }))})
+    })
+  })
+  test('partial queries are accepted - sort_by', () => {
+    return request(app)
+    .get("/api/reviews")
+    .send({ sort_by: "title" })
+    .expect(200)
+    .then((response) => {
+      expect(response.body.reviews).toBeSortedBy("title", {
+        ascending: true
+      })})
+  })
+  test('ignores case differences for asc/desc', () => {
+    return request(app)
+    .get("/api/reviews")
+    .send({ sort_by: "title", order: 'desc' })
+    .expect(200)
+    .then((response) => {
+      expect(response.body.reviews).toBeSortedBy("title", {
+        descending: true
+      })})
+  })
+  test('ignores non-relevant queries', () => {
+    return request(app)
+    .get("/api/reviews")
+    .send({ sort_by: "title", order: 'desc', random: 'random'})
+    .expect(200)
+    .then((response) => {
+      expect(response.body.reviews).toBeSortedBy("title", {
+        descending: true
+      })})
+  })
+  test('returns 400 for invalid category', () => {
+    return request(app)
+    .get("/api/reviews")
+    .send({ categories: "invalid"})
+    .expect(400)
+    .then(({ body: { message } }) => {
+      expect(message).toBe("Invalid query");
+    });
+  })
+  test('returns 400 for invalid sort_by', () => {
+    return request(app)
+    .get("/api/reviews")
+    .send({ catagories: 'social deduction', sort_by: "invalid"})
+    .expect(400)
+    .then(({ body: { message } }) => {
+      expect(message).toBe("Invalid query");
+    });
+  })
+  test('returns 400 for invalid order', () => {
+    return request(app)
+    .get("/api/reviews")
+    .send({ catagories: 'social deduction', sort_by: "title", order: 'random'})
+    .expect(400)
+    .then(({ body: { message } }) => {
+      expect(message).toBe("Invalid query");
+    });
+  })
+})
