@@ -2,8 +2,10 @@ const express = require("express");
 const { error404Handler, error500Handler, customErrorHandler, sqlErrorHandler } = require("./errors.controller");
 const { getCategories, getReviews, getReviewsByID, getCommentsByRevID, postComment, patchReviewVoteCount, getUsers } = require("./games.controller");
 
+const cors = require('cors');
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/api");
