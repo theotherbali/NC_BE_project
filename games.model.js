@@ -9,10 +9,10 @@ exports.selectUsers = () => {
   return db.query("SELECT * FROM users").then((results) => results.rows)
 }
 
-exports.selectUserByID = (id) => {
+exports.selectUserByUsername = (username) => {
   return db
   .query(
-    `SELECT * FROM reviews WHERE user_id = $1`, [id])
+    `SELECT * FROM reviews WHERE user_id = $1`, [username])
   .then((result) => {
     const user = result.rows[0]
     if (!user) {

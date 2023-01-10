@@ -6,7 +6,7 @@ const {
   insertNewComment,
   updateVoteCount,
   selectUsers,
-  selectUserByID,
+  selectUserByUsername,
 } = require("./games.model");
 
 exports.getCategories = (req, res) => {
@@ -22,9 +22,9 @@ exports.getUsers = (req, res) =>{
   )
 }
 
-exports.getUserByID = (req, res) => {
-  const id = req.params.user_id
-  selectUserByID(id).then((user) => {
+exports.getUserByUsername = (req, res) => {
+  const username = req.params.username
+  selectUserByUsername(username).then((user) => {
     res.status(200).send({ user })
   })
   .catch(next)
