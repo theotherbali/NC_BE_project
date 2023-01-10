@@ -6,6 +6,7 @@ const {
   insertNewComment,
   updateVoteCount,
   selectUsers,
+  selectUserByID,
 } = require("./games.model");
 
 exports.getCategories = (req, res) => {
@@ -19,6 +20,14 @@ exports.getUsers = (req, res) =>{
     res.status(200).send( { users })
   }
   )
+}
+
+exports.getUserByID = (req, res) => {
+  const id = req.params.user_id
+  selectUserByID(id).then((user) => {
+    res.status(200).send({ user })
+  })
+  .catch(next)
 }
 
 exports.getReviews = (req, res, next) => {
@@ -67,3 +76,5 @@ exports.patchReviewVoteCount = (req, res, next) => {
   })
   .catch(next)
 }
+
+

@@ -9,6 +9,22 @@ exports.selectUsers = () => {
   return db.query("SELECT * FROM users").then((results) => results.rows)
 }
 
+exports.selectUserByID = (id) => {
+  return db
+  .query(
+    `SELECT * FROM reviews WHERE user_id = $1`, [id])
+  .then((result) => {
+    const user = result.rows[0]
+    if (!user) {
+      return Promise.reject({
+        status: 404,
+        message: "no user found with that id"
+      })
+    }
+    return user
+  });
+}
+
 exports.selectReviews = (body) => {
   if (Object.keys(body).length === 0 ) {
     return db
