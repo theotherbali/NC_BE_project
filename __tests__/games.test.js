@@ -389,3 +389,23 @@ describe('GET /api/reviews (query)', () => {
     });
   })
 })
+
+describe.only("GET /api/users/:username", () => {
+  test("/api/users/:username returns correct object", () => {
+    return request(app)
+      .get("/api/users/mallionaire")
+      .expect(200)
+      .then((response) => {
+        console.log(response)
+        expect(response.body.user).toEqual(
+          expect.objectContaining({
+            username: "mallionaire",
+            name: 'haz',
+            avatar_url:
+              'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+          
+          })
+        );
+      });
+  })
+})

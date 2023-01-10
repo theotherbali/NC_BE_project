@@ -12,7 +12,7 @@ exports.selectUsers = () => {
 exports.selectUserByUsername = (username) => {
   return db
   .query(
-    `SELECT * FROM reviews WHERE username = $1`, [username])
+    `SELECT * FROM users WHERE username = $1`, [username])
   .then((result) => {
     const user = result.rows[0]
     if (!user) {
