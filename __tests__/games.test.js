@@ -75,7 +75,7 @@ describe("endpoints", () => {
   });
 });
 describe("GET /api/reviews/:review_id", () => {
-  test("/api/reviews/:review_id returns correct object", () => {
+  test.only("/api/reviews/:review_id returns correct object", () => {
     return request(app)
       .get("/api/reviews/5")
       .expect(200)
@@ -90,6 +90,8 @@ describe("GET /api/reviews/:review_id", () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             designer: expect.any(String),
+            comment_count: expect.any(String)
+
           })
         );
       });
@@ -390,7 +392,7 @@ describe('GET /api/reviews (query)', () => {
   })
 })
 
-describe.only("GET /api/users/:username", () => {
+describe("GET /api/users/:username", () => {
   test("/api/users/:username returns correct object", () => {
     return request(app)
       .get("/api/users/mallionaire")
