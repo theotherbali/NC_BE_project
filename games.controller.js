@@ -9,6 +9,8 @@ const {
   selectUserByUsername,
 } = require("./games.model");
 
+//could change categories here to category and then update on front end
+
 exports.getCategories = (req, res) => {
   selectCategories().then((categories) => {
     res.status(200).send({ categories });

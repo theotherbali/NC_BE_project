@@ -35,7 +35,7 @@ exports.selectReviews = ({ sort_by="created_at", order="ASC", category}) => {
           LEFT JOIN comments ON comments.review_id = reviews.review_id`;
 
 
-    const allowed_sortby = ["title", "review_id", "category", "review_img_url", "created_at", "votes", "designer"]
+    const allowed_sortby = ["title", "review_id", "category", "comment_count", "created_at", "votes", "designer"]
     const allowed_order =['asc', 'desc', 'ASC', 'DESC']
 
     if(!allowed_sortby.includes(sort_by) || !allowed_order.includes(order)){
