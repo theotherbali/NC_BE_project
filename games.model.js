@@ -47,7 +47,7 @@ exports.selectReviews = (body) => {
 
     const sort_by = body.sort_by
     const order = body.order
-    const category = body.categories
+    const category = body.category
 
     const allowed_sortby = ["title", "review_id", "category", "review_img_url", "created_at", "votes", "designer"]
     const allowed_categories = []
@@ -56,7 +56,7 @@ exports.selectReviews = (body) => {
       allowed_categories.push(category.slug)
     })
     
-    if(body.categories){
+    if(body.category){
       if (allowed_categories.includes(category)) {
         queryStr += ` WHERE category = '${category}'`
       } else {
@@ -81,6 +81,7 @@ exports.selectReviews = (body) => {
       queryStr += `GROUP BY reviews.review_id
       ORDER BY created_at DESC;`
     }
+
     
     return db
       .query(queryStr)

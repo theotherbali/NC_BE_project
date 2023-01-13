@@ -31,8 +31,7 @@ exports.getUserByUsername = (req, res, next) => {
 }
 
 exports.getReviews = (req, res, next) => {
-  const body = req.body
-  selectReviews(body).then((reviews) => {
+  selectReviews(req.query).then((reviews) => {
     res.status(200).send({ reviews });
   })
   .catch(next);

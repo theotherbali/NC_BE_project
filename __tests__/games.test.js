@@ -75,7 +75,7 @@ describe("endpoints", () => {
   });
 });
 describe("GET /api/reviews/:review_id", () => {
-  test.only("/api/reviews/:review_id returns correct object", () => {
+  test("/api/reviews/:review_id returns correct object", () => {
     return request(app)
       .get("/api/reviews/5")
       .expect(200)
@@ -309,34 +309,31 @@ describe('GET /api/users', () => {
 describe('GET /api/reviews (query)', () => {
   test('filters/sorts/orders by query supplied ', () =>{
     return request(app)
-    .get("/api/reviews")
-    .send({ categories: "social deduction", sort_by: "title", order: "DESC"})
+    .get("/api/reviews?category=dexterity&sort_by=title&order=DESC")
     .expect(200)
     .then((response) => {
       response.body.reviews.forEach((review) => {expect(review).toEqual(expect.objectContaining({
-        category: "social deduction"
+        category: "dexterity"
       }))})
       expect(response.body.reviews).toBeSortedBy("title", {
         descending: true,
       });
     })
-
   })
+
   test('partial queries are accepted - categories', () => {
     return request(app)
-    .get("/api/reviews")
-    .send({ categories: "social deduction"})
+    .get("/api/reviews?category=dexterity")
     .expect(200)
     .then((response) => {
       response.body.reviews.forEach((review) => {expect(review).toEqual(expect.objectContaining({
-        category: "social deduction"
+        category: "dexterity"
       }))})
     })
   })
   test('partial queries are accepted - sort_by', () => {
     return request(app)
-    .get("/api/reviews")
-    .send({ sort_by: "title" })
+    .get("/api/reviews?sort_by=title")
     .expect(200)
     .then((response) => {
       expect(response.body.reviews).toBeSortedBy("title", {
@@ -345,8 +342,7 @@ describe('GET /api/reviews (query)', () => {
   })
   test('ignores case differences for asc/desc', () => {
     return request(app)
-    .get("/api/reviews")
-    .send({ sort_by: "title", order: 'desc' })
+    .get("/api/reviews?sort_by=title&order=desc")
     .expect(200)
     .then((response) => {
       expect(response.body.reviews).toBeSortedBy("title", {
@@ -355,8 +351,7 @@ describe('GET /api/reviews (query)', () => {
   })
   test('ignores non-relevant queries', () => {
     return request(app)
-    .get("/api/reviews")
-    .send({ sort_by: "title", order: 'desc', random: 'random'})
+    .get("/api/reviews?sort_by=title&order=desc&random=random")
     .expect(200)
     .then((response) => {
       expect(response.body.reviews).toBeSortedBy("title", {
@@ -365,8 +360,7 @@ describe('GET /api/reviews (query)', () => {
   })
   test('returns 400 for invalid category', () => {
     return request(app)
-    .get("/api/reviews")
-    .send({ categories: "invalid"})
+    .get("/api/reviews?category=invalid")
     .expect(400)
     .then(({ body: { message } }) => {
       expect(message).toBe("Invalid query");
@@ -374,8 +368,7 @@ describe('GET /api/reviews (query)', () => {
   })
   test('returns 400 for invalid sort_by', () => {
     return request(app)
-    .get("/api/reviews")
-    .send({ catagories: 'social deduction', sort_by: "invalid"})
+    .get("/api/reviews?category=dexterity&sort_by=invalid")
     .expect(400)
     .then(({ body: { message } }) => {
       expect(message).toBe("Invalid query");
@@ -383,8 +376,7 @@ describe('GET /api/reviews (query)', () => {
   })
   test('returns 400 for invalid order', () => {
     return request(app)
-    .get("/api/reviews")
-    .send({ catagories: 'social deduction', sort_by: "title", order: 'random'})
+    .get("/api/reviews?category=dexterity&sort_by=title&order=random")
     .expect(400)
     .then(({ body: { message } }) => {
       expect(message).toBe("Invalid query");
@@ -398,7 +390,6 @@ describe("GET /api/users/:username", () => {
       .get("/api/users/mallionaire")
       .expect(200)
       .then((response) => {
-        console.log(response)
         expect(response.body.user).toEqual(
           expect.objectContaining({
             username: "mallionaire",
