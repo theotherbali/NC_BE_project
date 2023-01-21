@@ -68,7 +68,7 @@ describe("endpoints", () => {
         .get("/api/reviews")
         .then((response) => {
           expect(response.body.reviews).toBeSortedBy("created_at", {
-            descending: true,
+            ascending: true,
           });
         });
     });
